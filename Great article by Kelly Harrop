@@ -1,0 +1,136 @@
+About membership
+Homepage
+Go to the profile of Kelly Harrop
+Kelly Harrop
+www.kellyharrop.com
+Aug 28, 2016
+React for Dummies
+Some information I wish I had when I first started learning ReactJS.
+
+Brief Intro
+This article is mainly for people who are struggling with the current React documentation and need a little bit more explanation as to what is going on.
+
+Basic Jargon
+JSX: It looks like HTML in your JS file. The most obvious difference is you say “className” instead of “class” when defining your elements. If you ever see someone not using JSX, they’re crazy.
+
+ReactDOM: This is a separate library from React, and what you use to actually render your components. Make sure you include this in addition to your React library. Very nifty and you should be using this.
+
+Props: Think of these as what makes up your component. This can be data from an array, attributes, or any kind of data you want associated to an element. You get to name your proptype, which can be fun. Maybe.
+
+State: States are used to determine when things should change. (Visibility, data updates, etc.) You need to have an initial state declared when using states (see “Setting up Components”).
+
+Components: These are the building blocks of your app. You want to make these as modular as possible. The reason being React relies heavily upon using “this” rather than the jQuery method of targeting elements by class or ID.
+
+How Props Work
+When you reference a component, you can define what React should use for its props. It doesn’t matter where in your file you declare it — it will remain true everywhere in your app. For example:
+
+var dataArray = [{
+    name: 'John',
+    age:  '20'},
+   {name: 'Mary',
+    age:  '18'
+}]
+ReactDOM.render(<ExampleContainer data={dataArray} />, document.getElementById('app'));
+Here, I have a parent component called Example Container. “data” is a type of prop that I am assigning to that component. I can name this prop whatever I want — I just chose to call it data. That means anything from “dataArray” will be passed in as a prop, with the type of “data.”
+
+This is very important, because now in my Example Container component, I can use the map function (basically a for loop) to create a list of items. Note that the “i” inside the function is a built in feature of map that allows you to reference the index.
+
+class ExampleContainer extends React.Component {
+ render(){
+  return (
+   <ul>
+    {this.props.data.map(function(data, i){
+     return (
+      <li>
+       <ChildContainer data={data}/>
+      </li>
+     )
+    })}
+  </ul>
+  )
+ } 
+}
+What this is doing is since I defined var “data” as what the “data” prop of Example Container should reference, now I can use that create list items.
+
+You may notice the “ChildComponent” component that I’m referencing. The reason that I’m doing that instead of simply having my data inside “ExampleContainer” goes back to making things super modular. If I have any click states that I want triggered on a specific element, it’s best to make that its own component so that “this” will always refer to the specific element (not the parent container).
+
+Inside of “ChildContainer” I can now reference what’s in my array.
+
+class ChildContainer extends React.Component {
+ render(){
+  return (
+   <ul>
+    <li>{this.props.data.name}</li>
+    <li>{this.props.data.age}</li>
+   </ul>
+  )
+ }
+}
+In the example above, I’m setting “ChildContainer” prop type of “data” to the first parameter of my map function of the parent (which as previously discussed, has a prop of data pointing to our array). So basically:
+
+map.function(blah, index)
+//this is setting whatever is in your array to be a "blah" item
+<ChildContainer propType = {blah}/>
+...
+//inside your child component...
+{this.props.propType.arrayItem}
+//Basically blah is an item in your array, and your other components can reference these "blah" items by setting them as a prop.
+Still following along? Great!
+
+Setting up Components
+Depending on what tutorial you’re following, you’ll sometimes see components as vars or classes. If you see a component set up as a class, that means that person is using ES6 syntax.
+
+Things to know when using ES6 classes:
+
+There is no GetInitialState. Instead, you would use something like the example below.
+class ExampleComponent extends React.Component {
+  constructor(props) {
+  super(props);
+  this.state = {data: data}
+}
+You don’t need commas in between your functions
+You need to actually bind “this” when you call a function— it doesn’t do it for you automatically. The optimal way is to bind it in the constructor for performance reasons, but most tutorials have it as part of the call like the example below. For more information on this, this page does a good job of explaining it: http://egorsmirnov.me/2015/08/16/react-and-es6-part3.html
+<button onClick={this.increaseQty.bind(this)}Example</button>
+Some Gotchas
+You can only ever “return” one item.
+
+//DON'T DO
+return(
+   <div>Blah</div>
+   <div>Blah2</div>
+)
+//DO
+return(
+   <div>BlahContainer
+       <div>Blah</div>
+       <div>Blah2</div>
+   </div>
+)
+If you have a map function, use the first parameter instead of “this.props” to define what you need.
+
+//To return the "name" part from the array in the parent container
+{this.props.list.map(function(blah, i){
+    <div>{blah.name}</div>
+    <ChildContainer data = {blah}/>
+    }
+}
+Input values don’t update automatically like regular HTML inputs. You’ll need to update the state of the input on change.
+
+//set your initial state (initial input value will be '')
+constructor(props) {
+  super(props);
+  this.state = {inputValue: ''}
+//when the input changes(when you type things), update the value to what the user is typing
+onChange(e) {
+    this.setState({ inputValue: e.target.value });
+  }
+render(){return (
+      <input
+        type='text'
+        value={this.state.inputValue}
+        onChange={this.onChange} />
+    );
+}
+Congratulations!
+You survived this article and hopefully learned a little bit about more about how React works. It can be a little bit overwhelming when first starting out, so don’t worry — you’re not alone. Good luck, fellow reactors!
+
